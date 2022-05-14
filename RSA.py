@@ -1,16 +1,14 @@
-#import DiffieHellman;
-from os import system
-import random
+import primeGenerator
+from Encrypt import *
+from Decrypt import *
+from Keys import *
 
-from traitlets import Int
+import random
 import primeList
 
-alice_number = random.SystemRandom().randint(1, 10000) #private number for Alice
-bob_number = random.SystemRandom().randint(1, 10000) #private number for Bob
-#Alice_key = DiffieHellman.DiffieHellman(alice_number, bob_number)
-#Bob_key = DiffieHellman.DiffieHellman(alice_number, bob_number)
-def generateRandomPrimes(min, max):
-    '''Generates a random Prime number,
+
+def generateRandomPrimes(min, max) -> int:
+    '''generates a random prime number,
     input:
             -min: int
             -max: int
@@ -25,7 +23,7 @@ def generateRandomPrimes(min, max):
             return g
 
 def is_prime(n: int):
-    """Primality test using 6k+-1 optimization."""
+    """primality test using 6k+-1 optimization."""
     if n <= 3:
         return n > 1
     if not n%2 or not n%3:
@@ -43,12 +41,17 @@ def is_prime(n: int):
     return True
 
 
-class PK():
+
+class KeyObject():
+    #Object for Generating all Keys in the implementation
     def __init__(self,p: int, q: int):
         self.p = p 
         self.q = q
     
-    def computePublicKey(self):
+    def computePublicKey(self) -> int:
+        '''Computes RSA public Key:
+                                    --> e : 65537
+                                    --> n : p*q  '''
         self.n = (self.p) * (self.q)
         self.e = 65537
         return (self.n, self.e)
@@ -59,20 +62,20 @@ class PK():
         return self.phi
     
     def computePrivateKey(self):
-        self.PrivKey = pow(self.e, -1, self.phi)
+        self.PrivKey = pow(self.e, -1, self.phi) # modular exponentiation to maximise efficency <=> e ^-1 modulo phi
         return self.PrivKey
 
 
     
-    
 
 class Encryption():
     
-    def __init__(self, plainText : str, publicKey: tuple):
+    def __init__(self, plainText : int, publicKey: tuple):
         self.plainText = plainText
         self.publicKey = publicKey
     
-    def Transform(self):
+    def Transform(self) -> int:
+        '''Transforms Plain Text to base 10'''
         alphabet = 'abcdefghijklmnopqrstuvwxyz'
         self.transform = ''
         for letter in self.plainText:
@@ -80,24 +83,24 @@ class Encryption():
             index = str(index)
             self.transform += index 
         self.transform = int(self.transform)
-        print('transform', self.transform)
         return self.transform
             
-    def Encrypt(self):
-        print('PublicKey:', self.publicKey)
-        self.cipherText = (self.transform**self.publicKey[1]) % self.publicKey[0]
-        print('hi')
+    def Encrypt(self) -> int:
+        '''Encrypts via modular exponentiation'''
+        self.cipherText = pow(self.plainText, self.publicKey[1], self.publicKey[0])
         return self.cipherText
     
     
+     
 class Decryption():
     def __init__(self, cipherText: int, privateKey: int, publicKey: tuple):
+        '''Constructor'''
         self.cipherText = cipherText
         self.privateKey = privateKey
         self.publicKey = publicKey
     
-    def Decrypt(self):
-        print("beginning Decryption")
+    def Decrypt(self) -> int:
+        '''Decrypts Cipher Text via modular exponentiation'''
         self.plainText = pow(self.cipherText,self.privateKey, self.publicKey[0])
         return self.plainText
     
@@ -105,24 +108,40 @@ class Decryption():
 
 
 
-p = generateRandomPrimes(1000*10**5,1000*10**20)#should be 512 bits or 1024 bits
-q = generateRandomPrimes(1000*10**5, 1000*10**20)#Should be 512 or 1024 bits
-print("p and q:", p, q)
-print('n is:', p*q)
-print('Plain Text is:', 78)
-K = PK(p, q)
+
+
+p = primeGenerator.generateRandomPrimes(1000*10**10,1000*10**12)#should be 512 bits or 1024 bits
+q = primeGenerator.generateRandomPrimes(1000*10**10, 1000*10**12)#Should be 512 or 1024 bits
+print("p : ", p)
+print("q :", q)
+print('n :', p*q)
+
+
+
+K = KeyObject(p, q)
 PublicKey = K.computePublicKey()#Gives the secure parameter ex: RSA-1024
 phi = K.ComputePhi()
 PrivateKey = K.computePrivateKey()
-print('Private Key:', PrivateKey)
+
+
+print('Private Key :', PrivateKey)
 print('phi:', phi)
-cipherTextObject = Encryption("hi", PublicKey)
-cipherText = cipherTextObject.Transform()
+
+
+
+cipherTextObject = Encryption(31415926535897932384626, PublicKey)
+#cipherText = cipherTextObject.Transform()
 cipherText = cipherTextObject.Encrypt()
-print('Cipher Text is:', cipherText)
+
+
+print('Cipher Text :', cipherText)
+
+
 plainTextObject = Decryption(cipherText, PrivateKey, PublicKey)
 plainText = plainTextObject.Decrypt()
-print('Decrypted Plain Text is:', plainText)
+
+
+print('Decrypted Plain Text :', plainText)
     
 
         
