@@ -1,4 +1,4 @@
-    
+#Encryption module --> Encryption Object
 
 class Encryption():
     
@@ -17,9 +17,8 @@ class Encryption():
         print('transform', self.transform)
         return self.transform
             
-    def Encrypt(self):
+    def Encrypt(self) ->int:
         print('PublicKey:', self.publicKey)
-        self.cipherText = (self.transform**self.publicKey[1]) % self.publicKey[0]
-        print('hi')
+        self.cipherText = (self.plainText**self.publicKey[1]) % self.publicKey[0]
         return self.cipherText
     
