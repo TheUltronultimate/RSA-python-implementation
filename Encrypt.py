@@ -7,6 +7,9 @@ class Encryption():
         self.publicKey = publicKey
     
     def Transform(self):
+        '''Transforms linguistical plainText into base 10'''
+        
+        #this method needs improvement and should not be used for the moment
         alphabet = 'abcdefghijklmnopqrstuvwxyz'
         self.transform = ''
         for letter in self.plainText:
@@ -17,8 +20,8 @@ class Encryption():
         print('transform', self.transform)
         return self.transform
             
-    def Encrypt(self) ->int:
-        print('PublicKey:', self.publicKey)
-        self.cipherText = (self.plainText**self.publicKey[1]) % self.publicKey[0]
+    def Encrypt(self):
+        #print('PublicKey:', self.publicKey)
+        self.cipherText = pow(self.plainText, self.publicKey[1], self.publicKey[0])
         return self.cipherText
     
