@@ -1,5 +1,5 @@
 import random
-
+from pregenPrimes import primeGen
 
 # Module for securely generating random prime numbers to be used in RSA
 
@@ -15,7 +15,12 @@ def generateRandomPrimes(n):
     while A:
         # random.SystemRandom allows us to use cryptographically secure random numbers
         q = random.SystemRandom().randint(2**(n-1) + 1, 2**n -1)
-        if q %2 != 0:
+        for prime in primeGen:
+            if q % prime != 0:
+                continue
+            else:
+                q =  random.SystemRandom().randint(2**(n-1) + 1, 2**n -1)
+        if q % 2 != 0: 
             if isMillerRabinPassed(q, 40): #40 rounds of rabin miller is standard for good enough security
                 return q
 
@@ -58,3 +63,6 @@ def isMillerRabinPassed(miller_rabin_candidate, numberOfRabinTrials):
         if trialComposite(round_tester):
             return False
         return True
+
+
+    

@@ -4,8 +4,8 @@ from Decrypt import *
 from Keys import *
 
 
-p = primeGenerator.generateRandomPrimes(512)#should be 512 bits or 1024 bits
-q = primeGenerator.generateRandomPrimes(512)#Should be 512 bits or 1024 bits
+p = primeGenerator.generateRandomPrimes(1024)#should be 512 bits or 1024 bits
+q = primeGenerator.generateRandomPrimes(1024)#Should be 512 bits or 1024 bits
 plainText = 31415926535897932384626# Message cannot be longer than p*q without adding a padding scheme
     
         
