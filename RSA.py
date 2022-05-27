@@ -4,8 +4,8 @@ from Decrypt import *
 from Keys import *
 
 
-p = primeGenerator.generateRandomPrimes(1000*10**12,1000*10**13)#should be 512 bits or 1024 bits
-q = primeGenerator.generateRandomPrimes(1000*10**12,1000*10**13)#Should be 512 bits or 1024 bits
+p = primeGenerator.generateRandomPrimes(512)#should be 512 bits or 1024 bits
+q = primeGenerator.generateRandomPrimes(512)#Should be 512 bits or 1024 bits
 plainText = 31415926535897932384626# Message cannot be longer than p*q without adding a padding scheme
     
         
@@ -31,7 +31,7 @@ def RSA_Encrypt(p :int, q :int, plainText :int):
     return returned
 
 total = RSA_Encrypt(p, q, plainText)
-print('primes:', p, q)
+print('primes:', p,"\n", q)
 print("Original Message:",total[0])
 print("Encrypted Message:",total[1])
 print("Decrypted Message:",total[2])

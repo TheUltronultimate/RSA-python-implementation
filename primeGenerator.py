@@ -3,22 +3,21 @@ import random
 
 # Module for securely generating random prime numbers to be used in RSA
 
-def generateRandomPrimes(min: int, max: int):
+def generateRandomPrimes(n):
     '''Generates a random Prime number,
         - input : \n
                 - min: int\n
                 - max: int\n
         - output :
                 - g: int'''
-    assert min < max, "min value must be smaller than max value"
-    assert type(min) and type(max) == int, "min and max must be integers"
+    
     A = True
     while A:
         # random.SystemRandom allows us to use cryptographically secure random numbers
-        q = random.SystemRandom().randint(min -1, max)
-        if is_prime(q):
-            g = q
-            return g
+        q = random.SystemRandom().randint(2**(n-1) + 1, 2**n -1)
+        if q %2 != 0:
+            if isMillerRabinPassed(q, 40): #40 rounds of rabin miller is standard for good enough security
+                return q
 
 # Most efficient way I could find to verify primality 
 def is_prime(n: int):
@@ -35,3 +34,27 @@ def is_prime(n: int):
         i += 6
     return True
 
+def isMillerRabinPassed(miller_rabin_candidate, numberOfRabinTrials):
+    maxDivisionsByTwo = 0
+    evenComponent = miller_rabin_candidate-1
+    
+    while evenComponent % 2 == 0:
+        evenComponent >>= 1
+        maxDivisionsByTwo += 1
+        
+    assert(2**maxDivisionsByTwo * evenComponent == miller_rabin_candidate-1)
+
+    def trialComposite(round_tester):
+        if pow(round_tester, evenComponent,miller_rabin_candidate) == 1:
+            return False
+        for i in range(maxDivisionsByTwo):
+            if pow(round_tester, 2**i * evenComponent,miller_rabin_candidate)== miller_rabin_candidate-1:
+                return False
+            return True
+        
+        
+    for i in range(numberOfRabinTrials):
+        round_tester = random.randrange(2,miller_rabin_candidate)
+        if trialComposite(round_tester):
+            return False
+        return True
